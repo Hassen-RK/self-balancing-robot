@@ -1,0 +1,13 @@
+git add .
+# "git add" = tell Git to track changes
+# "." = means ALL files in the current folder
+# Together: "prepare everything for saving"
+
+git commit -m "feat(imu): add raw MPU6050 data reading"
+# "commit" = take a snapshot of your code right now
+# "-m" = means we're adding a message to this snapshot
+# The message describes what changed — follows our convention
+
+git push
+# Upload your local snapshot to GitHub
+# So your code is saved online, visible to everyone

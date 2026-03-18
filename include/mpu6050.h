@@ -1,5 +1,5 @@
 #pragma once
-
+#include <Arduino.h>
 #include <Wire.h>
 
 /*
@@ -31,15 +31,24 @@
 class mpu6050
 {
 private:
-    float accel_x, accel_y, accel_z;  // accelerometer in g
-    float gyro_x,  gyro_y,  gyro_z;   // gyroscope in °/s
+    float accel_x = 0.0F;     // accelerometer in g
+    float accel_y = 0.0F;
+    float accel_z = 0.0F;
+    float gyro_x  = 0.0F;     // gyroscope in °/s (bias corrected)
+    float gyro_y  = 0.0F;
+    float gyro_z  = 0.0F;
 
-    uint8_t _sda;  // SDA pin number
-    uint8_t _scl;  // SCL pin number
+    float rate_gyro_x = 0.0F; // gyro bias X — measured during calibration
+    float rate_gyro_y = 0.0F; // gyro bias Y
+    float rate_gyro_z = 0.0F; // gyro bias Z
+
+    uint8_t _sda;              // SDA pin number
+    uint8_t _scl;              // SCL pin number
+
 
 public:
     mpu6050(uint8_t sda, uint8_t scl); // constructor — stores pins ONLY
-    ~mpu6050();                         // destructor  — intentionally empty
+
 
     void begin();              // ← NEW — initializes hardware, call from setup()
     void mpu6050_gyro_read();  // reads gyro data
@@ -51,4 +60,8 @@ public:
 
     uint8_t getSDA() { return _sda; }
     uint8_t getSCL() { return _scl; }
+
+    void calibration_gyro(uint16_t calib);
+
+    ~mpu6050();                         // destructor  — intentionally empty
 };

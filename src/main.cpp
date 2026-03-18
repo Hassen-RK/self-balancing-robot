@@ -1,30 +1,30 @@
 #include <Arduino.h>
 #include "mpu6050.h"
 
-// Global object — constructor runs here but ONLY stores pin numbers
-// No hardware touched yet — safe!
+// global object — constructor stores pins only, safe here
 mpu6050 imu(21, 22);
-//          ↑   ↑
-//         SDA  SCL
 
 void setup() {
     Serial.begin(115200);
-    
+    delay(2000);   // wait for serial monitor to connect
+
+    // Step 1: wake up sensor + configure registers
     imu.begin();
-    // ↑ NOW hardware initializes — Arduino is fully ready at this point
-    // Wire.begin(), setClock(), wake up, DLPF, gyro range all happen here
-    delay(250);
-    Serial.println("[INFO] MPU6050 ready");
+    // ↑ THIS was missing — without it sensor sleeps forever
+    Serial.println("[OK] MPU6050 initialized");
+
+    // Step 2: calibrate — robot must be completely still!
+    Serial.println("[INFO] Calibrating... keep robot STILL for 2 seconds");
+    imu.calibration_gyro(2000);   // 2000 samples × 1ms = 2 seconds
+    Serial.println("[INFO] Calibration done — starting loop");
 }
 
 void loop() {
-    imu.mpu6050_gyro_read();  // read fresh data from sensor
+    imu.mpu6050_gyro_read();
 
-    Serial.printf("Gyro | X: %6.2f  Y: %6.2f  Z: %6.2f  [deg/s]\n",
-        imu.getGyroX(),
-        imu.getGyroY(),
-        imu.getGyroZ()
-    );
+    Serial.printf(">gyro_x:%.2f\n", imu.getGyroX());
+    Serial.printf(">gyro_y:%.2f\n", imu.getGyroY());
+    Serial.printf(">gyro_z:%.2f\n", imu.getGyroZ());
 
-    delay(10);  // 100Hz sample rate
+    delay(10U);   // 100Hz
 }
